@@ -69,6 +69,7 @@ public class UsuarioConverter {
                 .build();
     }
 
+
     private List<EnderecoDTO> paraListaEnderecoDTO(List<Endereco> enderecos) {
         return enderecos.stream().map(this::paraEnderecoDTO).toList();
         //               OU
