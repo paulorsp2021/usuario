@@ -1,10 +1,16 @@
 package com.javapaulo.usuario.business;
 
 import com.javapaulo.usuario.business.converter.UsuarioConverter;
+import com.javapaulo.usuario.business.dto.EnderecoDTO;
+import com.javapaulo.usuario.business.dto.TelefoneDTO;
 import com.javapaulo.usuario.business.dto.UsuarioDTO;
+import com.javapaulo.usuario.infrastructure.entity.Endereco;
+import com.javapaulo.usuario.infrastructure.entity.Telefone;
 import com.javapaulo.usuario.infrastructure.entity.Usuario;
 import com.javapaulo.usuario.infrastructure.exceptions.ConflictException;
 import com.javapaulo.usuario.infrastructure.exceptions.ResourceNotFoundException;
+import com.javapaulo.usuario.infrastructure.repository.EnderecoRepository;
+import com.javapaulo.usuario.infrastructure.repository.TelefoneRepository;
 import com.javapaulo.usuario.infrastructure.repository.UsuarioRepository;
 import com.javapaulo.usuario.infrastructure.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +25,8 @@ public class UsuarioService {
     private final UsuarioConverter usuarioConverter;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final EnderecoRepository enderecoRepository;
+    private final TelefoneRepository telefoneRepository;
 
     
     public UsuarioDTO salvaUsuario(UsuarioDTO usuarioDTO){
@@ -75,7 +83,26 @@ public class UsuarioService {
         Usuario usuario = usuarioConverter.updateUsuario(dto, usuarioEntity);
         //salva e retorna o dto
         return usuarioConverter.paraUsuarioDTO(usuarioRepository.save(usuario));
+    }
 
+    public EnderecoDTO atualizaEndereco(Long idEnd, EnderecoDTO enderecoDTO){
+
+        Endereco entity = enderecoRepository.findById(idEnd).orElseThrow(() ->
+                new ResourceNotFoundException("Id não encontrado" + idEnd));
+
+        Endereco endereco = usuarioConverter.updateEndereco(enderecoDTO,entity);
+
+        return usuarioConverter.paraEnderecoDTO(enderecoRepository.save(endereco));
+    }
+
+    public TelefoneDTO atualizaTelefone(Long idTel, TelefoneDTO dto){
+
+        Telefone entity = telefoneRepository.findById(idTel).orElseThrow(() ->
+                new ResourceNotFoundException("Id não encontrado" + idTel));
+
+        Telefone telefone = usuarioConverter.updateTelefone(dto, entity);
+
+        return usuarioConverter.paraTelefoneDTO(telefoneRepository.save(telefone));
     }
 
 }
